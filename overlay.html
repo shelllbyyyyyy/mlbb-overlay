@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>MLBB Stream Overlay</title>
+<link rel="stylesheet" href="assets/fonts/fonts-local.css">
+<link rel="stylesheet" href="css/overlay.css">
+</head>
+<body>
+<div id="stage">
+
+  <!-- ── Brand / socials ─────────────────────────────────────────── -->
+  <header class="topbar">
+    <div class="brand panel">
+      <div class="brand-mark" id="brandMark">
+        <span class="hex"></span>
+        <img id="brandAvatar" alt="">
+        <span class="brand-initials" id="brandInitials">AP</span>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name" id="streamerName">ARIF PLAYS</div>
+        <div class="brand-tag" id="streamerTag">MOBILE LEGENDS · BANG BANG</div>
+        <div class="socials" id="socials"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Match pill ──────────────────────────────────────────────── -->
+  <div class="match-pill panel" id="matchPill">
+    <span class="dot"></span>
+    <span id="matchMode">RANKED</span>
+    <span class="sep">/</span>
+    <span id="matchRank">MYTHIC 25★</span>
+    <span class="sep">/</span>
+    <span id="matchQueue">SOLO Q</span>
+  </div>
+
+  <!-- ── Session record ──────────────────────────────────────────── -->
+  <section class="record panel" id="recordPanel">
+    <div class="rec-item">
+      <span class="rec-label">Wins</span>
+      <span class="rec-value win" id="statWins">3</span>
+    </div>
+    <span class="rec-divider"></span>
+    <div class="rec-item">
+      <span class="rec-label">Losses</span>
+      <span class="rec-value loss" id="statLosses">1</span>
+    </div>
+    <span class="rec-divider"></span>
+    <div class="rec-item">
+      <span class="rec-label">MVP</span>
+      <span class="rec-value mvp" id="statMvp">2</span>
+    </div>
+    <span class="rec-divider"></span>
+    <div class="rec-ring">
+      <svg viewBox="0 0 72 72" aria-hidden="true">
+        <defs>
+          <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop class="ring-stop-a" offset="0"/>
+            <stop class="ring-stop-b" offset="1"/>
+          </linearGradient>
+        </defs>
+        <circle class="ring-bg" cx="36" cy="36" r="30"/>
+        <circle class="ring-fg" id="winRing" cx="36" cy="36" r="30"/>
+      </svg>
+      <div class="ring-label"><b id="winRate">75</b><span>%</span></div>
+    </div>
+  </section>
+
+  <!-- ── Webcam frame ────────────────────────────────────────────── -->
+  <div class="cam" id="cam">
+    <svg class="cam-frame" viewBox="0 0 448 252" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="camGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop class="cam-stop-a" offset="0"/>
+          <stop class="cam-stop-b" offset="1"/>
+        </linearGradient>
+      </defs>
+      <path d="M26 1.5 H446.5 V226 L422.5 250.5 H1.5 V26 Z"
+            fill="none" stroke="url(#camGrad)" stroke-width="3"/>
+    </svg>
+    <div class="cam-placeholder">Webcam layer<br><small>place your camera here</small></div>
+    <div class="cam-live"><span class="pulse-dot"></span>LIVE</div>
+    <div class="cam-plate">
+      <!-- <strong id="camName">ARIF PLAYS</strong> -->
+      <span>MLBB · <span id="camRank">MYTHIC</span></span>
+    </div>
+  </div>
+
+  <!-- ── Goal + hero pick ────────────────────────────────────────── -->
+  <div class="right-stack">
+    <div class="goal panel" id="goalCard">
+      <div class="goal-head">
+        <span class="goal-label" id="goalLabel">RANKED WINS TODAY</span>
+        <span class="goal-count"><b id="goalNow">3</b><i>/</i><span id="goalTarget">5</span></span>
+      </div>
+      <div class="goal-track">
+        <div class="goal-fill" id="goalFill"></div>
+      </div>
+    </div>
+
+    <div class="hero panel" id="heroCard">
+      <div class="hero-avatar" id="heroAvatar">
+        <img class="avatar-img" id="heroImg" alt="">
+        <span class="avatar-initials" id="heroInitials">LI</span>
+      </div>
+      <div class="hero-body">
+        <div class="hero-eyebrow"><span class="dot"></span>Hero pick</div>
+        <div class="hero-name" id="heroName">LING</div>
+        <div class="hero-meta">
+          <span class="role" id="heroRole">Jungler</span>
+          <span class="hero-note" id="heroNote">Road to Mythic Glory</span>
+        </div>
+      </div>
+      <span class="hero-edge"></span>
+    </div>
+  </div>
+
+  <!-- ── Ticker ──────────────────────────────────────────────────── -->
+  <div class="ticker" id="ticker">
+    <div class="ticker-badge"><span class="pulse-dot"></span>Stream</div>
+    <div class="ticker-view">
+      <div class="ticker-track" id="tickerTrack"></div>
+    </div>
+  </div>
+
+  <!-- ── Toast (win / loss / MVP pop) ────────────────────────────── -->
+  <div class="toast" id="toast" data-type="win" aria-live="polite">
+    <div class="toast-inner">
+      <span class="toast-kicker" id="toastKicker">Session update</span>
+      <span class="toast-text" id="toastText">VICTORY</span>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/defaults.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/overlay.js"></script>
+</body>
+</html>

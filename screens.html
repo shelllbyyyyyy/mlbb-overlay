@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>MLBB Stream Screen</title>
+<link rel="stylesheet" href="assets/fonts/fonts-local.css">
+<link rel="stylesheet" href="css/screens.css">
+</head>
+<body>
+<div class="screen" id="screen" data-screen="starting">
+
+  <canvas id="particles" width="1920" height="1080"></canvas>
+  <div class="bg-grid"></div>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <div class="screen-frame"></div>
+
+  <header class="screen-top">
+    <div class="brandline">
+      <div class="mark" id="brandMark">
+        <img id="brandAvatar" alt="">
+        <span id="brandInitials">AP</span>
+      </div>
+      <div class="brand-copy">
+        <b id="streamerName">ARIF PLAYS</b>
+        <span id="streamerTag">MOBILE LEGENDS · BANG BANG</span>
+      </div>
+    </div>
+    <div class="rank-pill" id="rankPill">
+      <span class="dot"></span>
+      <span id="rankText">MYTHIC 25★</span>
+    </div>
+  </header>
+
+  <main class="screen-main">
+    <div class="kicker" id="kicker">MOBILE LEGENDS: BANG BANG</div>
+    <h1 class="title" id="title" data-text="STARTING SOON">STARTING SOON</h1>
+    <p class="subtitle" id="subtitle">Warming up · first match queues in a moment</p>
+
+    <div class="countdown" id="countdown">
+      <div class="cd-block">
+        <b id="cdMin">10</b>
+        <span>Minutes</span>
+      </div>
+      <div class="cd-colon">:</div>
+      <div class="cd-block">
+        <b id="cdSec">00</b>
+        <span>Seconds</span>
+      </div>
+    </div>
+    <div class="cd-caption" id="cdCaption">Stream starts in</div>
+
+    <div class="session-strip" id="sessionStrip">
+      <div class="strip-item"><span>Wins</span><b id="sumWins">3</b></div>
+      <div class="strip-item"><span>Losses</span><b id="sumLosses">1</b></div>
+      <div class="strip-item"><span>Win rate</span><b id="sumRate">75%</b></div>
+      <div class="strip-item"><span>MVP</span><b id="sumMvp">2</b></div>
+    </div>
+  </main>
+
+  <footer class="screen-foot">
+    <div class="socials" id="socials"></div>
+    <div class="foot-note" id="footNote">Follow to get notified</div>
+  </footer>
+
+</div>
+
+<script src="js/defaults.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/screens.js"></script>
+</body>
+</html>

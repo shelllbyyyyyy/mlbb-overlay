@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MLBB Overlay · Control Panel</title>
+<link rel="stylesheet" href="assets/fonts/fonts-local.css">
+<link rel="stylesheet" href="css/control.css">
+</head>
+<body>
+<div class="shell">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">ML</div>
+      <div>
+        <h1>MLBB Overlay</h1>
+        <p>Stream control panel</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="status" id="status"><i></i><span id="statusText">Connecting…</span></span>
+      <a class="btn ghost" href="/overlay.html?preview=1" target="_blank" rel="noopener">Open overlay</a>
+    </div>
+  </header>
+
+  <main class="layout">
+
+    <!-- ══ Settings column ══════════════════════════════════════ -->
+    <section class="col main-col">
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Streamer</h2>
+          <span class="hint">Shown on the overlay and all screens</span>
+        </div>
+        <div class="grid two">
+          <label class="field">
+            <span>Display name</span>
+            <input id="streamerName" maxlength="30" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Tagline</span>
+            <input id="streamerTag" maxlength="48" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Logo initials</span>
+            <input id="streamerInitials" maxlength="3" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Logo image URL <em>optional</em></span>
+            <input id="streamerAvatar" placeholder="https://…" autocomplete="off">
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Session stats</h2>
+          <button class="btn ghost small" id="btnReset">Reset stats</button>
+        </div>
+        <div class="quick">
+          <button class="quick-btn win" id="btnWin">
+            <b>+ Win</b><small>Victory toast</small>
+          </button>
+          <button class="quick-btn loss" id="btnLoss">
+            <b>+ Loss</b><small>Defeat toast</small>
+          </button>
+          <button class="quick-btn mvp" id="btnMvp">
+            <b>+ MVP</b><small>MVP toast</small>
+          </button>
+        </div>
+        <div class="grid four">
+          <label class="field">
+            <span>Wins</span>
+            <input type="number" id="statWins" min="0" max="9999">
+          </label>
+          <label class="field">
+            <span>Losses</span>
+            <input type="number" id="statLosses" min="0" max="9999">
+          </label>
+          <label class="field">
+            <span>MVP</span>
+            <input type="number" id="statMvp" min="0" max="9999">
+          </label>
+          <label class="field">
+            <span>Goal target</span>
+            <input type="number" id="goalTarget" min="1" max="9999">
+          </label>
+        </div>
+        <label class="field">
+          <span>Goal label</span>
+          <input id="goalLabel" maxlength="42" autocomplete="off">
+        </label>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Match info</h2>
+          <span class="hint">Top pill + webcam nameplate</span>
+        </div>
+        <div class="grid three">
+          <label class="field">
+            <span>Mode</span>
+            <input id="matchMode" maxlength="16" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Rank</span>
+            <input id="matchRank" maxlength="20" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Queue</span>
+            <input id="matchQueue" maxlength="16" autocomplete="off">
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Hero pick</h2>
+          <label class="switch" title="Show the hero card">
+            <input type="checkbox" id="heroEnabled">
+            <i></i>
+          </label>
+        </div>
+        <div class="grid two">
+          <label class="field">
+            <span>Hero name</span>
+            <input id="heroName" maxlength="20" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Role</span>
+            <input id="heroRole" maxlength="18" autocomplete="off">
+          </label>
+        </div>
+        <label class="field">
+          <span>Note</span>
+          <input id="heroNote" maxlength="40" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Hero image URL <em>optional — square image works best</em></span>
+          <input id="heroImage" placeholder="https://…" autocomplete="off">
+        </label>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Scrolling ticker</h2>
+          <label class="switch" title="Show the ticker">
+            <input type="checkbox" id="tickerEnabled">
+            <i></i>
+          </label>
+        </div>
+        <label class="field">
+          <span>Message</span>
+          <input id="tickerText" maxlength="180" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Speed <output id="tickerSpeedOut">38</output></span>
+          <input type="range" id="tickerSpeed" min="10" max="90" step="1">
+        </label>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Socials</h2>
+          <span class="hint">Up to six looks best</span>
+        </div>
+        <div class="social-list" id="socialList"></div>
+        <button class="btn ghost small" id="addSocial">+ Add social</button>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Theme</h2>
+          <span class="hint">Applies to every overlay page</span>
+        </div>
+        <div class="themes" id="themes"></div>
+        <div class="grid two">
+          <label class="field color">
+            <span>Accent</span>
+            <input type="color" id="themeAccent">
+          </label>
+          <label class="field color">
+            <span>Secondary</span>
+            <input type="color" id="themeAccent2">
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Screen text</h2>
+          <button class="btn ghost small" id="btnRestartTimers">Restart countdowns</button>
+        </div>
+
+        <div class="screen-group">
+          <h3><span class="tag gold">Starting soon</span></h3>
+          <div class="grid two">
+            <label class="field">
+              <span>Title</span>
+              <input id="startingTitle" maxlength="28" autocomplete="off">
+            </label>
+            <label class="field">
+              <span>Countdown minutes <em>0 hides it</em></span>
+              <input type="number" id="startingMinutes" min="0" max="999">
+            </label>
+            <label class="field span2">
+              <span>Subtitle</span>
+              <input id="startingSubtitle" maxlength="80" autocomplete="off">
+            </label>
+          </div>
+        </div>
+
+        <div class="screen-group">
+          <h3><span class="tag cyan">Be right back</span></h3>
+          <div class="grid two">
+            <label class="field">
+              <span>Title</span>
+              <input id="brbTitle" maxlength="28" autocomplete="off">
+            </label>
+            <label class="field">
+              <span>Countdown minutes <em>0 hides it</em></span>
+              <input type="number" id="brbMinutes" min="0" max="999">
+            </label>
+            <label class="field span2">
+              <span>Subtitle</span>
+              <input id="brbSubtitle" maxlength="80" autocomplete="off">
+            </label>
+          </div>
+        </div>
+
+        <div class="screen-group">
+          <h3><span class="tag white">Ending</span></h3>
+          <div class="grid two">
+            <label class="field span2">
+              <span>Title</span>
+              <input id="endingTitle" maxlength="28" autocomplete="off">
+            </label>
+            <label class="field span2">
+              <span>Subtitle</span>
+              <input id="endingSubtitle" maxlength="80" autocomplete="off">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card danger-card">
+        <div class="card-head">
+          <h2>Danger zone</h2>
+        </div>
+        <p class="muted">Restore the demo content (name, stats, socials, theme, screens).</p>
+        <button class="btn danger small" id="btnResetAll">Reset everything</button>
+      </div>
+
+    </section>
+
+    <!-- ══ Preview / help column ════════════════════════════════ -->
+    <aside class="col side-col">
+
+      <div class="card preview-card">
+        <div class="card-head">
+          <h2>Live preview</h2>
+          <a class="link" href="/overlay.html?preview=1" target="_blank" rel="noopener">Full size ↗</a>
+        </div>
+        <div class="preview-wrap" id="previewWrap">
+          <iframe id="preview" src="/overlay.html?preview=1" title="Overlay preview"></iframe>
+        </div>
+        <p class="preview-note">This is exactly what OBS renders, with a preview backdrop so you can see the transparent parts.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>OBS setup</h2>
+        </div>
+        <ol class="steps">
+          <li>Add a <b>Browser</b> source at <b>1920 × 1080</b> and paste the overlay URL.</li>
+          <li>Put your game capture and webcam <b>below</b> the overlay source.</li>
+          <li>Place the webcam at <b>X 44 · Y 752</b>, size <b>448 × 252</b>.</li>
+          <li>Use the screen links below in your Starting / BRB / Ending scenes.</li>
+        </ol>
+        <div class="copy-field">
+          <span>Overlay URL</span>
+          <div class="copy-row">
+            <input id="overlayUrl" readonly>
+            <button class="btn small" data-copy="overlayUrl">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Screen sources</h2>
+          <span class="hint">One browser source each</span>
+        </div>
+        <div class="screen-links" id="screenLinks"></div>
+      </div>
+
+      <div class="card tips-card">
+        <div class="card-head">
+          <h2>Quick tips</h2>
+        </div>
+        <ul class="tips">
+          <li>Keep the Terminal window open — it runs the live sync.</li>
+          <li>Every change saves instantly; there is no “apply” button.</li>
+          <li>YouTube chat: add your chat URL as a separate browser source.</li>
+          <li>Changed your webcam position? Keep the overlay at 1920 × 1080 and only move the camera.</li>
+        </ul>
+      </div>
+
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <span>MLBB Overlay · local only · no account, no cloud</span>
+    <span id="footerState">State saved automatically</span>
+  </footer>
+</div>
+
+<script src="js/control.js"></script>
+</body>
+</html>

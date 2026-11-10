@@ -1,0 +1,59 @@
+{
+  "streamer": {
+    "name": "ARIF PLAYS",
+    "tagline": "MOBILE LEGENDS · BANG BANG",
+    "initials": "AP",
+    "avatar": ""
+  },
+  "socials": [
+    { "type": "youtube", "label": "@arifplays" },
+    { "type": "tiktok", "label": "@arifplays" },
+    { "type": "discord", "label": "discord.gg/arif" }
+  ],
+  "session": {
+    "wins": 3,
+    "losses": 1,
+    "mvp": 2,
+    "goalTarget": 5,
+    "goalLabel": "Ranked wins today"
+  },
+  "match": {
+    "mode": "RANKED",
+    "rank": "MYTHIC 25★",
+    "queue": "SOLO Q"
+  },
+  "hero": {
+    "enabled": true,
+    "name": "LING",
+    "role": "Jungler",
+    "note": "Road to Mythic Glory",
+    "image": ""
+  },
+  "ticker": {
+    "enabled": true,
+    "speed": 38,
+    "text": "Welcome to the stream! Drop a follow and say hi in chat · Road to Mythic Glory · GG WP"
+  },
+  "theme": {
+    "accent": "#f7c948",
+    "accent2": "#35e0ff",
+    "bg": "#060a12"
+  },
+  "screens": {
+    "starting": {
+      "title": "STARTING SOON",
+      "subtitle": "Warming up · first match queues in a moment",
+      "minutes": 10
+    },
+    "brb": {
+      "title": "BE RIGHT BACK",
+      "subtitle": "Grabbing a drink — don't go anywhere",
+      "minutes": 5
+    },
+    "ending": {
+      "title": "THANKS FOR WATCHING",
+      "subtitle": "GG WP — see you next stream"
+    }
+  },
+  "pulse": { "id": 0, "type": "info", "text": "" }
+}
