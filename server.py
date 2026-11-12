@@ -5,9 +5,11 @@ MLBB overlay control server.
 Zero dependencies. Serves the overlay files, keeps the live overlay state in
 state.json, and pushes updates to OBS (and any browser) over Server-Sent Events.
 
-    python3 server.py                 # http://localhost:8765
+    python3 server.py                 # http://localhost:8765 (macOS / Linux)
+    py -3 server.py                   # Windows
     python3 server.py --port 9000
     python3 server.py --host 0.0.0.0  # allow control from a phone on your LAN
+    python3 server.py --open          # also open the control panel
 """
 
 from __future__ import annotations
@@ -19,8 +21,17 @@ import queue
 import sys
 import threading
 import time
+import webbrowser
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse
+
+# Windows terminals can default to a legacy code page; keep the banner readable.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (OSError, ValueError):
+            pass
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 STATE_FILE = os.path.join(ROOT, "state.json")
@@ -102,6 +113,24 @@ def broadcast(state: dict) -> None:
 # ── HTTP handler ───────────────────────────────────────────────────────────
 class OverlayHandler(SimpleHTTPRequestHandler):
     server_version = "MLBBOverlay/1.0"
+
+    # Don't rely on the Windows registry for these; a wrong MIME type can stop
+    # the browser from applying CSS or loading the bundled fonts.
+    extensions_map = {
+        **SimpleHTTPRequestHandler.extensions_map,
+        ".html": "text/html; charset=utf-8",
+        ".css": "text/css; charset=utf-8",
+        ".js": "text/javascript; charset=utf-8",
+        ".json": "application/json; charset=utf-8",
+        ".svg": "image/svg+xml",
+        ".woff": "font/woff",
+        ".woff2": "font/woff2",
+        ".png": "image/png",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".webp": "image/webp",
+        ".ico": "image/x-icon",
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=ROOT, **kwargs)
@@ -205,7 +234,10 @@ class OverlayHandler(SimpleHTTPRequestHandler):
                 STATE.update(merged)
                 state = snapshot_locked()
 
-            persist(state)
+            try:
+                persist(state)
+            except OSError as err:
+                print(f"! Could not save state.json: {err}")
             broadcast(state)
             self.send_json({"ok": True})
             return
@@ -240,14 +272,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="MLBB overlay control server")
     parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8765")))
     parser.add_argument("--host", default=os.environ.get("HOST", "127.0.0.1"))
+    parser.add_argument("--open", action="store_true",
+                        help="open the control panel in your browser when ready")
     args = parser.parse_args()
 
     try:
         httpd = ThreadingHTTPServer((args.host, args.port), OverlayHandler)
     except OSError as err:
         print(f"\n! Could not start on {args.host}:{args.port} — {err}")
-        print("  Another copy may already be running. Try: open "
-              f"http://localhost:{args.port}/control.html\n")
+        print("  Another copy may already be running. Open "
+              f"http://localhost:{args.port}/control.html in your browser.\n")
         sys.exit(1)
 
     httpd.daemon_threads = True
@@ -265,9 +299,16 @@ def main() -> None:
     print(f"                  {base}/screens.html?screen=brb")
     print(f"                  {base}/screens.html?screen=ending")
     if args.host == "0.0.0.0":
-        print("\n  LAN mode: open the control panel from your phone using your")
-        print("  Mac's IP address instead of localhost (same Wi-Fi).")
+        print("\n  LAN mode: open the control panel from your phone using this")
+        print("  computer's IP address instead of localhost (same Wi-Fi).")
+        print("  Allow the firewall prompt on private networks if it appears.")
     print("\n  Keep this window open. Press Ctrl+C to stop.\n")
+    sys.stdout.flush()
+
+    if args.open:
+        opener = threading.Timer(0.5, webbrowser.open, args=(f"{base}/control.html",))
+        opener.daemon = True
+        opener.start()
 
     try:
         httpd.serve_forever()

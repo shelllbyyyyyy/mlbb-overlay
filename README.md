@@ -4,7 +4,8 @@ A self-hosted OBS overlay pack for **Mobile Legends: Bang Bang** YouTube streams
 
 It includes a transparent in-game HUD, full-screen Starting Soon / BRB / Ending
 scenes, and a control panel that updates OBS live while you stream. No account,
-no cloud, no npm install — just Python 3 (already on macOS) and OBS.
+no cloud, no npm install — just Python 3.8+ and OBS. (Python is already on
+macOS; Windows needs a one-time install.)
 
 > The overlay is 1920 × 1080 with a transparent background. The preview
 > backdrop is only visible in the control panel / `?preview=1`.
@@ -13,12 +14,17 @@ no cloud, no npm install — just Python 3 (already on macOS) and OBS.
 
 ## Quick start
 
-1. **Start the server** — double-click `start.command`.
-   If macOS blocks it: right-click → **Open**, or run:
-   ```bash
-   chmod +x start.command
-   ./start.command
-   ```
+1. **Start the server**
+   - **Windows:** double-click **`start.bat`**. If Python 3.8+ is missing,
+     install it from <https://www.python.org/downloads/windows/> and tick
+     **Add python.exe to PATH** during setup. If SmartScreen appears, choose
+     **More info → Run anyway**.
+   - **macOS:** double-click **`start.command`**. If macOS blocks it:
+     right-click → **Open**, or run:
+     ```bash
+     chmod +x start.command
+     ./start.command
+     ```
    The control panel opens at <http://localhost:8765/control.html>.
 
 2. **Add the overlay in OBS**
@@ -55,8 +61,8 @@ no cloud, no npm install — just Python 3 (already on macOS) and OBS.
 
 ## Control panel
 
-Open <http://localhost:8765/control.html> (the `start.command` launcher does it
-for you). Everything saves automatically.
+Open <http://localhost:8765/control.html> (the `start.command` / `start.bat`
+launcher does it for you). Everything saves automatically.
 
 - **Session stats** — `+ Win`, `+ Loss`, `+ MVP` buttons bump the score and play
   a short toast on stream. The win-rate ring and goal bar update live.
@@ -72,12 +78,22 @@ for you). Everything saves automatically.
 
 ### Control from your phone
 
+Start the server in LAN mode:
+
+**macOS**
 ```bash
 HOST=0.0.0.0 ./start.command
 ```
 
-Then open `http://YOUR-MAC-IP:8765/control.html` on your phone (same Wi-Fi).
-macOS may ask for firewall permission the first time.
+**Windows (Command Prompt)**
+```bat
+set HOST=0.0.0.0
+start.bat
+```
+
+Then open `http://YOUR-COMPUTER-IP:8765/control.html` on your phone (same
+Wi-Fi). Find the IP with `ipconfig` on Windows or `ipconfig getifaddr en0` on
+macOS. Allow the firewall prompt on private networks if it appears.
 
 ---
 
@@ -103,7 +119,8 @@ macOS may ask for firewall permission the first time.
 
 ```
 mlbb-overlay/
-├── start.command          ← double-click launcher
+├── start.command          ← double-click launcher (macOS)
+├── start.bat              ← double-click launcher (Windows)
 ├── server.py              ← zero-dependency local server + live sync
 ├── control.html           ← control panel
 ├── overlay.html           ← transparent in-game overlay
@@ -132,8 +149,18 @@ The control panel and OBS talk over Server-Sent Events on
 ## Troubleshooting
 
 **“Server offline — retrying” in the control panel**
-The Terminal window running `start.command` was closed. Run it again. If port
-8765 is busy, another copy is already running — the launcher will reuse it.
+The Terminal / Command Prompt window running `start.command` (macOS) or
+`start.bat` (Windows) was closed. Run it again. If port 8765 is busy, another
+copy is already running — the launcher will reuse it.
+
+**Windows says “Python was not found”**
+Install Python 3 from <https://www.python.org/downloads/windows/> and tick
+**Add python.exe to PATH** during setup. Close and reopen the folder, then run
+`start.bat` again.
+
+**Windows Firewall asks about Python**
+Allow access on **private networks**. This is only needed for phone control;
+`localhost` works without it.
 
 **The overlay looks black / not transparent**
 Make sure it is a **Browser** source (not Media Source), sized 1920 × 1080.
@@ -149,7 +176,11 @@ you change the minutes value.
 
 **I changed the port**
 ```bash
-PORT=9000 ./start.command
+PORT=9000 ./start.command        # macOS
+```
+```bat
+set PORT=9000
+start.bat
 ```
 Then update the URLs in OBS and in the control panel (they are generated from
 the address you open the panel with).
@@ -166,6 +197,7 @@ pack intentionally doesn't include chat so you can position/theme it yourself.
 ## Notes
 
 - Everything runs locally; nothing is uploaded anywhere.
+- Runs the same on macOS and Windows; OBS Browser sources use identical URLs.
 - Fonts (Chakra Petch, Rajdhani, Inter) are bundled in `assets/fonts`, so the
   overlay still looks right with no internet.
 - Tested layout: 1920 × 1080 at 100% source scale. If you stream at 2560 × 1440,

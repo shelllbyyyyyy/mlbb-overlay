@@ -25,15 +25,15 @@
   ],
   "session": {
     "wins": 3,
-    "losses": 3,
+    "losses": 1,
     "mvp": 0,
     "goalTarget": 5,
     "goalLabel": "Ranked wins today"
   },
   "match": {
     "mode": "RANKED",
-    "rank": "MYTHIC 74★",
-    "queue": "SOLO Q"
+    "rank": "MYTHIC 79★",
+    "queue": "DUO"
   },
   "hero": {
     "enabled": false,
@@ -56,12 +56,12 @@
     "starting": {
       "title": "STARTING SOON",
       "subtitle": "Warming up · first match queues in a moment",
-      "minutes": 1
+      "minutes": 3
     },
     "brb": {
       "title": "BE RIGHT BACK",
-      "subtitle": "Grabbing a drink — don't go anywhere",
-      "minutes": 5
+      "subtitle": "Take a lunch — don't go anywhere",
+      "minutes": 10
     },
     "ending": {
       "title": "THANKS FOR WATCHING",
