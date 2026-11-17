@@ -156,6 +156,9 @@
     state = next;
     applyTheme(next.theme);
 
+    /* stream format chosen in the control panel */
+    window.MLBB_LAYOUT?.setPanelMode(next.layout && next.layout.mode);
+
     /* brand */
     const streamer = next.streamer || {};
     const mark = $("brandMark");
@@ -268,8 +271,9 @@
       lastPulse = (incoming.pulse && incoming.pulse.id) || 0;
       render(merge(DEFAULTS, incoming));
       subscribe();
-    } catch {
+    } catch (err) {
       /* Opened as a plain file, or the server is not running yet. */
+      console.warn("Overlay state unavailable, retrying:", err);
       render(merge(DEFAULTS, {}));
       setTimeout(boot, 4000);
     }

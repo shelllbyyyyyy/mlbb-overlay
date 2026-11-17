@@ -4,9 +4,12 @@
 
   const DEFAULTS = window.MLBB_DEFAULTS || {};
   const ICONS = window.MLBB_ICONS || {};
+  const LAYOUT = window.MLBB_LAYOUT;
   const $ = (id) => document.getElementById(id);
   const root = document.documentElement;
   const params = new URLSearchParams(location.search);
+
+  const isPortrait = () => !!LAYOUT && LAYOUT.mode === "portrait";
 
   const screenKey = ["starting", "brb", "ending"].includes(params.get("screen"))
     ? params.get("screen")
@@ -190,10 +193,24 @@
     countdownTimer = window.setInterval(() => paintCountdown(end), 250);
   }
 
+  /* ── title sizing (long titles shrink to fit) ─────────────────── */
+  function applyTitleSize(title) {
+    const el = $("title");
+    if (!el) return;
+    const text = String(title || el.textContent || "");
+    const base = isPortrait() ? 92 : 132;
+    el.style.fontSize = text.length > 16
+      ? `${Math.max(Math.round(base * 0.47), Math.round(base * 16 / text.length))}px`
+      : "";
+  }
+
   /* ── render ──────────────────────────────────────────────────── */
   function render(next) {
     state = next;
     applyTheme(next.theme);
+
+    /* stream format chosen in the control panel */
+    if (LAYOUT) LAYOUT.setPanelMode(next.layout && next.layout.mode);
 
     const streamer = next.streamer || {};
     const mark = $("brandMark");
@@ -215,9 +232,7 @@
     const title = String(config.title || "").trim() || "MOBILE LEGENDS";
     setText($("title"), title);
     $("title").dataset.text = title;
-    $("title").style.fontSize = title.length > 16
-      ? `${Math.max(62, Math.round(132 * 16 / title.length))}px`
-      : "";
+    applyTitleSize(title);
     setText($("subtitle"), config.subtitle || "");
     setText($("kicker"), KICKERS[screenKey]);
     setText($("footNote"), FOOT_NOTES[screenKey]);
@@ -251,12 +266,32 @@
   }
 
   /* ── particles ───────────────────────────────────────────────── */
+  let hexes = [];
+
+  function sizeCanvas() {
+    const canvas = $("particles");
+    if (!canvas) return;
+    const design = (LAYOUT && LAYOUT.design) || { w: 1920, h: 1080 };
+    const prevW = canvas.width || design.w;
+    const prevH = canvas.height || design.h;
+    canvas.width = design.w;
+    canvas.height = design.h;
+    if (hexes.length) {
+      const rx = design.w / prevW;
+      const ry = design.h / prevH;
+      for (const hex of hexes) {
+        hex.x *= rx;
+        hex.y *= ry;
+      }
+    }
+  }
+
   function startParticles() {
     const canvas = $("particles");
     const ctx = canvas.getContext("2d");
-    const W = 1920;
-    const H = 1080;
-    const hexes = Array.from({ length: 28 }, () => ({
+    const W = canvas.width;
+    const H = canvas.height;
+    hexes = Array.from({ length: 28 }, () => ({
       x: Math.random() * W,
       y: Math.random() * H,
       r: 6 + Math.random() * 26,
@@ -281,7 +316,9 @@
     }
 
     function frame(time) {
-      ctx.clearRect(0, 0, W, H);
+      const cw = canvas.width;
+      const ch = canvas.height;
+      ctx.clearRect(0, 0, cw, ch);
       ctx.strokeStyle = accent;
       ctx.lineWidth = 1.2;
 
@@ -290,11 +327,11 @@
         hex.y -= hex.vy;
         hex.rot += hex.spin;
         if (hex.y < -50) {
-          hex.y = H + 50;
-          hex.x = Math.random() * W;
+          hex.y = ch + 50;
+          hex.x = Math.random() * cw;
         }
-        if (hex.x < -50) hex.x = W + 50;
-        if (hex.x > W + 50) hex.x = -50;
+        if (hex.x < -50) hex.x = cw + 50;
+        if (hex.x > cw + 50) hex.x = -50;
 
         ctx.globalAlpha = hex.alpha * (0.65 + 0.35 * Math.sin(time * 0.001 + hex.phase));
         hexPath(hex.x, hex.y, hex.r, hex.rot);
@@ -335,6 +372,13 @@
     }
   }
 
+  sizeCanvas();
   startParticles();
   boot();
+
+  /* The canvas flips between landscape and portrait designs. */
+  window.addEventListener("mlbb:layout", () => {
+    sizeCanvas();
+    if (state) applyTitleSize(state.screens && state.screens[screenKey] && state.screens[screenKey].title);
+  });
 })();

@@ -21,13 +21,16 @@
 }
 
 html, body {
-  width: 1920px;
-  height: 1080px;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: #04070d;
 }
 
 body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-body);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -35,8 +38,11 @@ body {
 
 .screen {
   position: relative;
-  width: 1920px;
-  height: 1080px;
+  flex: 0 0 auto;
+  width: var(--design-w, 1920px);
+  height: var(--design-h, 1080px);
+  transform: scale(var(--fit, 1));
+  transform-origin: center center;
   overflow: hidden;
   background:
     radial-gradient(1100px 760px at 50% 34%, rgba(var(--accent-rgb), .10), transparent 62%),
@@ -505,6 +511,45 @@ body {
   color: var(--accent);
   white-space: nowrap;
 }
+
+/* ── Portrait design (1080 x 1920 · YouTube Shorts) ───────────── */
+html.is-portrait .screen-frame { inset: 20px; }
+html.is-portrait .screen-top { top: 42px; left: 36px; right: 36px; }
+html.is-portrait .brand-copy b { font-size: 21px; }
+html.is-portrait .brand-copy span { font-size: 10px; letter-spacing: .22em; }
+html.is-portrait .mark { width: 58px; height: 64px; }
+html.is-portrait .mark span { font-size: 20px; }
+html.is-portrait .rank-pill { font-size: 13px; padding: 12px 20px; }
+
+html.is-portrait .screen-main { padding: 150px 56px 230px; }
+html.is-portrait .kicker { font-size: 12px; letter-spacing: .36em; gap: 12px; }
+html.is-portrait .kicker::before,
+html.is-portrait .kicker::after { width: 42px; }
+html.is-portrait .title { margin-top: 18px; font-size: 92px; }
+html.is-portrait .subtitle { margin-top: 18px; max-width: 840px; font-size: 20px; }
+
+html.is-portrait .countdown { gap: 18px; margin-top: 46px; }
+html.is-portrait .cd-block { width: 218px; padding: 22px 0 16px; }
+html.is-portrait .cd-block b { font-size: 76px; }
+html.is-portrait .cd-block span { font-size: 10px; letter-spacing: .28em; }
+html.is-portrait .cd-colon { font-size: 52px; }
+html.is-portrait .cd-caption { font-size: 12px; }
+
+html.is-portrait .session-strip { margin-top: 44px; }
+html.is-portrait .strip-item { padding: 18px 28px; }
+html.is-portrait .strip-item span { font-size: 10px; }
+html.is-portrait .strip-item b { font-size: 40px; }
+
+html.is-portrait .screen-foot {
+  left: 36px;
+  right: 36px;
+  bottom: 34px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+html.is-portrait .social { font-size: 12px; padding: 8px 16px 8px 11px; }
+html.is-portrait .foot-note { font-size: 13px; }
 
 /* ── Animations ──────────────────────────────────────────────── */
 @keyframes rise {

@@ -33,6 +33,48 @@
     { key: "ending", label: "Ending" }
   ];
 
+  /* ── Stream formats ───────────────────────────────────────────── */
+  const FORMATS = {
+    landscape: {
+      label: "Landscape",
+      size: "1920 × 1080",
+      note: "Everything on stream switches to the wide design — including browser sources you already added in OBS. No URL changes needed.",
+      steps: [
+        "Add a <b>Browser</b> source at <b>1920 × 1080</b> and paste the overlay URL.",
+        "Keep your game capture and webcam <b>below</b> the overlay source.",
+        "Place the webcam at <b>X 44 · Y 752</b>, size <b>448 × 252</b>.",
+        "Use the screen links below in your Starting / BRB / Ending scenes.",
+        "Want to switch to Shorts mid-stream? Change <b>Stream format</b> here — the overlay updates live."
+      ]
+    },
+    portrait: {
+      label: "Shorts",
+      size: "1080 × 1920",
+      note: "Everything on stream switches to the vertical design. Size the browser source to 1080 × 1920 so it renders full size.",
+      steps: [
+        "Add a <b>Browser</b> source at <b>1080 × 1920</b> and paste the overlay URL.",
+        "Keep your game capture and webcam <b>below</b> the overlay source.",
+        "Place the webcam at <b>X 36 · Y 1523</b>, size <b>520 × 293</b>.",
+        "Use the screen links below in your Shorts scenes.",
+        "Switching back to Landscape here flips every source back — no URL changes needed."
+      ]
+    },
+    both: {
+      label: "Both",
+      size: "1920 × 1080 + 1080 × 1920",
+      note: "Each source picks the design that fits it: the 1920 × 1080 one stays wide, the 1080 × 1920 one goes vertical. One panel drives both.",
+      steps: [
+        "Add <b>two Browser</b> sources: <b>1920 × 1080</b> for YouTube and <b>1080 × 1920</b> for Shorts.",
+        "Paste the same overlay URL in both — each source picks the layout that fits it.",
+        "Landscape webcam at <b>X 44 · Y 752</b> (<b>448 × 252</b>); Shorts webcam at <b>X 36 · Y 1523</b> (<b>520 × 293</b>).",
+        "Add the screen links to both sets of scenes.",
+        "Picking Landscape or Shorts here forces that design on every source."
+      ]
+    }
+  };
+
+  const FORMAT_KEYS = Object.keys(FORMATS);
+
   let state = null;
   let saveTimer = 0;
   let connected = false;
@@ -264,6 +306,8 @@
 
   /* ── fill form from state ────────────────────────────────────── */
   function fillForm() {
+    state.layout = state.layout || { mode: "landscape" };
+
     $("streamerName").value = state.streamer.name || "";
     $("streamerTag").value = state.streamer.tagline || "";
     $("streamerInitials").value = state.streamer.initials || "";
@@ -302,11 +346,14 @@
     $("brbMinutes").value = state.screens.brb.minutes;
     $("endingTitle").value = state.screens.ending.title || "";
     $("endingSubtitle").value = state.screens.ending.subtitle || "";
+
+    applyFormat();
   }
 
   /* ── URLs ────────────────────────────────────────────────────── */
-  function overlayUrl() {
-    return `${location.origin}/overlay.html`;
+  function overlayUrl(mode) {
+    const suffix = mode === "portrait" ? "?mode=portrait" : "";
+    return `${location.origin}/overlay.html${suffix}`;
   }
 
   function screenUrl(key) {
@@ -314,7 +361,11 @@
   }
 
   function buildUrls() {
-    $("overlayUrl").value = overlayUrl();
+    const mode = currentFormat();
+
+    $("overlayUrl").value = overlayUrl("landscape");
+    $("overlayUrlPortrait").value = overlayUrl("portrait");
+    $("overlayUrlNote").textContent = mode === "portrait" ? "1080 × 1920" : "1920 × 1080";
 
     const wrap = $("screenLinks");
     wrap.innerHTML = "";
@@ -378,16 +429,87 @@
   }
 
   /* ── preview scaling ─────────────────────────────────────────── */
+  const PREVIEWS = [
+    { wrap: "previewWrap", frame: "preview", w: 1920, h: 1080 },
+    { wrap: "previewWrapPortrait", frame: "previewPortrait", w: 1080, h: 1920 }
+  ];
+
+  function fitFrame(wrap, frame, dw, dh) {
+    if (!wrap || !frame) return;
+    const boxW = wrap.clientWidth;
+    const boxH = wrap.clientHeight;
+    if (!boxW || !boxH) return;
+    const scale = Math.min(boxW / dw, boxH / dh);
+    frame.style.width = `${dw}px`;
+    frame.style.height = `${dh}px`;
+    frame.style.transform = `scale(${scale})`;
+    frame.style.left = `${Math.max(0, (boxW - dw * scale) / 2)}px`;
+    frame.style.top = `${Math.max(0, (boxH - dh * scale) / 2)}px`;
+  }
+
+  function fitPreviews() {
+    for (const preview of PREVIEWS) {
+      fitFrame($(preview.wrap), $(preview.frame), preview.w, preview.h);
+    }
+  }
+
   function setupPreview() {
-    const wrap = $("previewWrap");
-    const frame = $("preview");
-    const resize = () => {
-      const scale = wrap.clientWidth / 1920;
-      frame.style.transform = `scale(${scale})`;
-    };
-    if (window.ResizeObserver) new ResizeObserver(resize).observe(wrap);
-    window.addEventListener("resize", resize);
-    resize();
+    for (const preview of PREVIEWS) {
+      const wrap = $(preview.wrap);
+      if (!wrap) continue;
+      if (window.ResizeObserver) new ResizeObserver(() => fitFrame(wrap, $(preview.frame), preview.w, preview.h)).observe(wrap);
+    }
+    window.addEventListener("resize", fitPreviews);
+    fitPreviews();
+  }
+
+  /* ── format switch ───────────────────────────────────────────── */
+  function currentFormat() {
+    const mode = state && state.layout ? state.layout.mode : "landscape";
+    return FORMAT_KEYS.includes(mode) ? mode : "landscape";
+  }
+
+  function applyFormat() {
+    const mode = currentFormat();
+    const format = FORMATS[mode];
+
+    $("previewGrid").dataset.mode = mode;
+    $("formatNote").textContent = format.note;
+    $("previewHint").textContent = format.size;
+    $("obsHint").textContent = format.size;
+
+    const steps = $("obsSteps");
+    steps.innerHTML = "";
+    for (const html of format.steps) {
+      const li = document.createElement("li");
+      li.innerHTML = html;
+      steps.appendChild(li);
+    }
+
+    const open = $("openOverlay");
+    open.href = "/overlay.html?preview=1";
+
+    document.querySelectorAll(".format-btn").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.mode === mode);
+    });
+
+    buildUrls();
+    fitPreviews();
+  }
+
+  function bindFormats() {
+    document.querySelectorAll(".format-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (!state) return;
+        const mode = btn.dataset.mode;
+        if (!FORMAT_KEYS.includes(mode)) return;
+        state.layout = state.layout || {};
+        state.layout.mode = mode;
+        applyFormat();
+        save();
+        $("footerState").textContent = `Format · ${FORMATS[mode].label}`;
+      });
+    });
   }
 
   /* ── actions ─────────────────────────────────────────────────── */
@@ -509,6 +631,21 @@
 
     $("overlayUrl").addEventListener("click", (event) => event.target.select());
 
+    document.querySelectorAll("[data-copy]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const input = $(btn.dataset.copy);
+        if (!input) return;
+        input.select();
+        copyText(input.value, btn);
+      });
+    });
+
+    document.querySelectorAll(".copy-row input").forEach((input) => {
+      input.addEventListener("click", () => input.select());
+      input.addEventListener("focus", () => input.select());
+    });
+
+    bindFormats();
     bindActions();
   }
 

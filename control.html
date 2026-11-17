@@ -20,7 +20,7 @@
     </div>
     <div class="top-actions">
       <span class="status" id="status"><i></i><span id="statusText">Connecting…</span></span>
-      <a class="btn ghost" href="/overlay.html?preview=1" target="_blank" rel="noopener">Open overlay</a>
+      <a class="btn ghost" id="openOverlay" href="/overlay.html?preview=1" target="_blank" rel="noopener">Open overlay</a>
     </div>
   </header>
 
@@ -258,34 +258,74 @@
     <!-- ══ Preview / help column ════════════════════════════════ -->
     <aside class="col side-col">
 
+      <div class="card">
+        <div class="card-head">
+          <h2>Stream format</h2>
+          <span class="hint">Landscape, Shorts, or both</span>
+        </div>
+        <div class="format-switch" id="formatSwitch">
+          <button type="button" class="format-btn" data-mode="landscape">
+            <span class="format-shape wide"></span>
+            <b>Landscape</b>
+            <small>1920 × 1080</small>
+          </button>
+          <button type="button" class="format-btn" data-mode="portrait">
+            <span class="format-shape tall"></span>
+            <b>Shorts</b>
+            <small>1080 × 1920</small>
+          </button>
+          <button type="button" class="format-btn" data-mode="both">
+            <span class="format-shape duo"></span>
+            <b>Both</b>
+            <small>Live together</small>
+          </button>
+        </div>
+        <p class="muted format-note" id="formatNote"></p>
+      </div>
+
       <div class="card preview-card">
         <div class="card-head">
           <h2>Live preview</h2>
-          <a class="link" href="/overlay.html?preview=1" target="_blank" rel="noopener">Full size ↗</a>
+          <span class="hint" id="previewHint">1920 × 1080</span>
         </div>
-        <div class="preview-wrap" id="previewWrap">
-          <iframe id="preview" src="/overlay.html?preview=1" title="Overlay preview"></iframe>
+        <div class="preview-grid" id="previewGrid" data-mode="landscape">
+          <div class="preview-box landscape">
+            <span class="preview-tag">Landscape · 1920 × 1080</span>
+            <div class="preview-wrap" id="previewWrap">
+              <iframe id="preview" src="/overlay.html?preview=1" title="Overlay preview"></iframe>
+            </div>
+          </div>
+          <div class="preview-box portrait">
+            <span class="preview-tag">Shorts · 1080 × 1920</span>
+            <div class="preview-wrap portrait" id="previewWrapPortrait">
+              <iframe id="previewPortrait" src="/overlay.html?preview=1&amp;mode=portrait" title="Overlay preview, vertical"></iframe>
+            </div>
+          </div>
         </div>
-        <p class="preview-note">This is exactly what OBS renders, with a preview backdrop so you can see the transparent parts.</p>
+        <p class="preview-note">Exactly what OBS renders, with a preview backdrop. The overlay scales itself to the source size, so one URL covers every format.</p>
       </div>
 
       <div class="card">
         <div class="card-head">
           <h2>OBS setup</h2>
+          <span class="hint" id="obsHint">1920 × 1080</span>
         </div>
-        <ol class="steps">
-          <li>Add a <b>Browser</b> source at <b>1920 × 1080</b> and paste the overlay URL.</li>
-          <li>Put your game capture and webcam <b>below</b> the overlay source.</li>
-          <li>Place the webcam at <b>X 44 · Y 752</b>, size <b>448 × 252</b>.</li>
-          <li>Use the screen links below in your Starting / BRB / Ending scenes.</li>
-        </ol>
+        <ol class="steps" id="obsSteps"></ol>
         <div class="copy-field">
-          <span>Overlay URL</span>
+          <span>Overlay URL <em id="overlayUrlNote">1920 × 1080</em></span>
           <div class="copy-row">
             <input id="overlayUrl" readonly>
             <button class="btn small" data-copy="overlayUrl">Copy</button>
           </div>
         </div>
+        <div class="copy-field">
+          <span>Force Shorts <em>optional — ignores Stream format</em></span>
+          <div class="copy-row">
+            <input id="overlayUrlPortrait" readonly>
+            <button class="btn small" data-copy="overlayUrlPortrait">Copy</button>
+          </div>
+        </div>
+        <p class="preview-note" id="urlNote">The plain overlay URL follows <b>Stream format</b>, so you can switch between Landscape and Shorts while streaming without touching OBS. Use the pinned Shorts URL only for a source that must stay vertical.</p>
       </div>
 
       <div class="card">
@@ -294,6 +334,7 @@
           <span class="hint">One browser source each</span>
         </div>
         <div class="screen-links" id="screenLinks"></div>
+        <p class="preview-note">Same links for every format — just size the browser source to your canvas (1920 × 1080 or 1080 × 1920) and the screens follow.</p>
       </div>
 
       <div class="card tips-card">
@@ -303,8 +344,9 @@
         <ul class="tips">
           <li>Keep the Terminal window open — it runs the live sync.</li>
           <li>Every change saves instantly; there is no “apply” button.</li>
+          <li>Switch <b>Stream format</b> to see the Shorts layout and its OBS sizes.</li>
           <li>YouTube chat: add your chat URL as a separate browser source.</li>
-          <li>Changed your webcam position? Keep the overlay at 1920 × 1080 and only move the camera.</li>
+          <li>Changed your webcam position? Keep the overlay at its native size and only move the camera.</li>
         </ul>
       </div>
 

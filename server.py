@@ -37,6 +37,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 STATE_FILE = os.path.join(ROOT, "state.json")
 DEFAULTS_FILE = os.path.join(ROOT, "default-state.json")
 
+# Optional URL prefixes that force a stream format, e.g. /portrait/overlay.html
+MODE_PREFIXES = ("landscape", "portrait")
+
 _lock = threading.Lock()
 _subscribers: set[queue.Queue[str]] = set()
 
@@ -111,6 +114,19 @@ def broadcast(state: dict) -> None:
 
 
 # ── HTTP handler ───────────────────────────────────────────────────────────
+class OverlayServer(ThreadingHTTPServer):
+    """Threaded server with a roomy accept queue.
+
+    A browser opens several connections at once (CSS, fonts, the live event
+    stream), and the default backlog of 5 makes it drop requests — which shows
+    up as a control panel or overlay that never connects.
+    """
+
+    daemon_threads = True
+    allow_reuse_address = True
+    request_queue_size = 128
+
+
 class OverlayHandler(SimpleHTTPRequestHandler):
     server_version = "MLBBOverlay/1.0"
 
@@ -187,8 +203,23 @@ class OverlayHandler(SimpleHTTPRequestHandler):
                 _subscribers.discard(channel)
 
     # ── routes ─────────────────────────────────────────────────────────────
+    def split_mode_prefix(self, path: str) -> tuple[str, str]:
+        """Strip a leading /landscape or /portrait from a URL path.
+
+        Lets OBS use http://host:port/portrait/overlay.html when a query
+        string is not an option.
+        """
+        for prefix in MODE_PREFIXES:
+            token = "/" + prefix
+            if path == token:
+                return "/", prefix
+            if path.startswith(token + "/"):
+                return path[len(token):], prefix
+        return path, ""
+
     def do_GET(self) -> None:  # noqa: N802
-        path = urlparse(self.path).path
+        parsed = urlparse(self.path)
+        path, _mode = self.split_mode_prefix(parsed.path)
 
         if path == "/":
             self.send_response(302)
@@ -207,6 +238,10 @@ class OverlayHandler(SimpleHTTPRequestHandler):
         if path == "/events":
             self.stream_events()
             return
+
+        # Serve the file from the prefixed URL as well (assets included).
+        if _mode:
+            self.path = path + (f"?{parsed.query}" if parsed.query else "")
 
         super().do_GET()
 
@@ -277,7 +312,7 @@ def main() -> None:
     args = parser.parse_args()
 
     try:
-        httpd = ThreadingHTTPServer((args.host, args.port), OverlayHandler)
+        httpd = OverlayServer((args.host, args.port), OverlayHandler)
     except OSError as err:
         print(f"\n! Could not start on {args.host}:{args.port} — {err}")
         print("  Another copy may already be running. Open "

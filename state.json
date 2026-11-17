@@ -24,16 +24,16 @@
     }
   ],
   "session": {
-    "wins": 3,
+    "wins": 2,
     "losses": 1,
     "mvp": 0,
-    "goalTarget": 5,
+    "goalTarget": 10,
     "goalLabel": "Ranked wins today"
   },
   "match": {
     "mode": "RANKED",
-    "rank": "MYTHIC 79★",
-    "queue": "DUO"
+    "rank": "MYTHIC 93★",
+    "queue": "SOLO"
   },
   "hero": {
     "enabled": false,
@@ -56,16 +56,19 @@
     "starting": {
       "title": "STARTING SOON",
       "subtitle": "Warming up · first match queues in a moment",
-      "minutes": 3
+      "minutes": 2
     },
     "brb": {
       "title": "BE RIGHT BACK",
       "subtitle": "Take a lunch — don't go anywhere",
-      "minutes": 10
+      "minutes": 15
     },
     "ending": {
       "title": "THANKS FOR WATCHING",
       "subtitle": "GG WP — see you next stream"
     }
+  },
+  "layout": {
+    "mode": "landscape"
   }
 }

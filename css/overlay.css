@@ -23,13 +23,16 @@
 }
 
 html, body {
-  width: 1920px;
-  height: 1080px;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: transparent;
 }
 
 body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-body);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -38,8 +41,11 @@ body {
 
 #stage {
   position: relative;
-  width: 1920px;
-  height: 1080px;
+  flex: 0 0 auto;
+  width: var(--design-w, 1920px);
+  height: var(--design-h, 1080px);
+  transform: scale(var(--fit, 1));
+  transform-origin: center center;
 }
 
 .is-hidden { display: none !important; }
@@ -774,6 +780,92 @@ html.preview .cam-placeholder { display: grid; }
 .toast[data-type="mvp"] .toast-inner::after { background: var(--accent-2); box-shadow: 0 0 18px rgba(var(--accent2-rgb), .8); }
 
 .toast[data-type="info"] .toast-text { color: #eaf1fb; text-shadow: 0 0 30px rgba(255, 255, 255, .25); }
+
+/* ── Portrait design (1080 x 1920 · YouTube Shorts) ───────────── */
+html.is-portrait .topbar {
+  top: 36px;
+  right: 36px;
+  bottom: auto;
+  left: 36px;
+}
+
+html.is-portrait .brand { width: 100%; }
+html.is-portrait .brand-mark { width: 66px; height: 72px; }
+html.is-portrait .brand-initials { font-size: 23px; }
+html.is-portrait .brand-name { font-size: 30px; }
+html.is-portrait .brand-tag { font-size: 11px; letter-spacing: .22em; }
+html.is-portrait .socials { max-width: 100%; margin-top: 12px; }
+
+html.is-portrait .match-pill {
+  top: 176px;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  padding: 12px 26px;
+  font-size: 14px;
+}
+
+html.is-portrait .record {
+  top: 248px;
+  bottom: auto;
+  left: 36px;
+  right: 36px;
+  gap: 14px;
+  padding: 18px 22px;
+}
+
+html.is-portrait .rec-value { font-size: 40px; }
+html.is-portrait .rec-label { font-size: 10px; }
+html.is-portrait .rec-divider { height: 46px; }
+html.is-portrait .rec-ring { width: 80px; height: 80px; }
+html.is-portrait .ring-label b { font-size: 25px; line-height: 80px; }
+html.is-portrait .ring-label span { font-size: 10px; }
+
+html.is-portrait .right-stack {
+  top: 398px;
+  right: 36px;
+  bottom: auto;
+  left: 36px;
+  width: auto;
+  gap: 18px;
+}
+
+html.is-portrait .goal { padding: 18px 20px 20px; }
+html.is-portrait .goal-label { font-size: 11px; }
+html.is-portrait .goal-count b { font-size: 28px; }
+html.is-portrait .goal-count span { font-size: 15px; }
+html.is-portrait .goal-count i { font-size: 14px; }
+html.is-portrait .goal-track { height: 12px; }
+
+html.is-portrait .hero { min-height: 150px; gap: 20px; padding: 18px 20px; }
+html.is-portrait .hero-avatar { width: 96px; height: 108px; }
+html.is-portrait .avatar-initials { font-size: 32px; }
+html.is-portrait .hero-eyebrow { font-size: 11px; }
+html.is-portrait .hero-name { font-size: 40px; }
+html.is-portrait .role { font-size: 11px; padding: 4px 10px; }
+html.is-portrait .hero-note { font-size: 13px; }
+
+html.is-portrait .cam {
+  left: 36px;
+  bottom: 104px;
+  width: 520px;
+  height: 293px;
+}
+
+html.is-portrait .cam-live { top: 18px; left: 18px; font-size: 12px; padding: 6px 15px; }
+html.is-portrait .cam-plate { left: 18px; bottom: 18px; padding: 10px 20px 10px 14px; }
+html.is-portrait .cam-plate strong { font-size: 19px; }
+html.is-portrait .cam-plate span { font-size: 10px; }
+
+html.is-portrait .ticker { height: 64px; }
+html.is-portrait .ticker-badge { font-size: 13px; padding: 0 30px 0 22px; }
+html.is-portrait .ticker-copy { font-size: 14px; }
+
+html.is-portrait .toast { top: 780px; }
+html.is-portrait .toast-inner { padding: 22px 54px 24px; }
+html.is-portrait .toast-kicker { font-size: 11px; }
+html.is-portrait .toast-text { font-size: 46px; }
 
 /* ── Animations ───────────────────────────────────────────────── */
 @keyframes pulse {

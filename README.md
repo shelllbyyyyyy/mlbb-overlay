@@ -27,23 +27,37 @@ macOS; Windows needs a one-time install.)
      ```
    The control panel opens at <http://localhost:8765/control.html>.
 
-2. **Add the overlay in OBS**
-   - Add a **Browser** source, size **1920 × 1080**.
-   - URL: `http://localhost:8765/overlay.html`
-   - Leave width/height at 1920 × 1080 and don't add custom CSS.
+2. **Pick your stream format** in the control panel
+   - **Landscape** — YouTube / Twitch, `1920 × 1080`
+   - **Shorts** — YouTube Shorts / TikTok / Reels, `1080 × 1920`
+   - **Both** — run the two at the same time from one control panel
 
-3. **Layer your scene** (bottom → top)
+   The overlay picks the right design by itself: drop it in a `1920 × 1080`
+   browser source and you get the landscape HUD, drop it in a `1080 × 1920`
+   source and you get the vertical Shorts HUD. **The URL never changes.**
+
+3. **Add the overlay in OBS**
+   - Add a **Browser** source at the size of your stream.
+   - URL: `http://localhost:8765/overlay.html`
+   - Leave width/height at the native size and don't add custom CSS.
+   - Want both? Add a second **Browser** source at `1080 × 1920` with the same
+     URL and put it in your vertical scene.
+
+4. **Layer your scene** (bottom → top)
    1. Display / Game Capture
    2. Webcam
    3. The overlay browser source
 
-4. **Align the webcam** with the frame:
-   - Position **X 44 · Y 752**
-   - Size **448 × 252**
+5. **Align the webcam** with the frame:
 
-5. **Add the full-screen scenes** (optional, recommended)
+   | Format | Position | Size |
+   |---|---|---|
+   | Landscape `1920 × 1080` | **X 44 · Y 752** | **448 × 252** |
+   | Shorts `1080 × 1920` | **X 36 · Y 1523** | **520 × 293** |
+
+6. **Add the full-screen scenes** (optional, recommended)
    Create OBS scenes named *Starting Soon*, *BRB* and *Ending*, each with one
-   Browser source at 1920 × 1080:
+   Browser source at your stream size:
 
    | Scene | URL |
    |---|---|
@@ -52,8 +66,10 @@ macOS; Windows needs a one-time install.)
    | Ending | `http://localhost:8765/screens.html?screen=ending` |
 
    The countdown is shared between refreshes, so switching scenes won't reset it.
+   The screens also switch layout by themselves — landscape scenes get the wide
+   design, vertical scenes get the Shorts design.
 
-6. **Go live on YouTube**
+7. **Go live on YouTube**
    In OBS: **Settings → Stream → YouTube**, paste your stream key, then start
    streaming. The overlay is only a source — it does not touch your stream key.
 
@@ -73,8 +89,101 @@ launcher does it for you). Everything saves automatically.
 - **Theme** — five presets plus custom accent / secondary colors.
 - **Screen text** — titles, subtitles and countdown minutes for all three scenes.
 - **Restart countdowns** — if a countdown already hit `00:00`, reset it here.
-- **Live preview** — a scaled 1920 × 1080 preview of the real overlay.
+- **Stream format** — switch between Landscape, Shorts and Both (see below).
+- **Live preview** — a scaled preview of the real overlay, in the format you picked.
 - **Screen sources** — copy the exact URLs for your OBS scenes.
+
+---
+
+## Stream formats
+
+The pack is responsive: the overlay is drawn on a fixed design canvas
+(`1920 × 1080` or `1080 × 1920`) and then scaled to whatever size the OBS
+browser source is. That means one URL covers every format and every canvas
+size — including smaller ones like `1280 × 720`.
+
+Pick a format in the control panel to change the preview, the setup notes and
+the OBS sizes that are shown:
+
+| Mode | Canvas | When to use |
+|---|---|---|
+| **Landscape** | `1920 × 1080` | YouTube live, Twitch, Kick |
+| **Shorts** | `1080 × 1920` | YouTube Shorts, TikTok, Reels |
+| **Both** | `1920 × 1080` + `1080 × 1920` | Streaming to YouTube and Shorts at the same time |
+
+### Switching without touching the OBS URL
+
+The plain overlay URL follows whatever you pick in **Stream format**, and the
+change is pushed to every open browser source over the live connection. You
+can switch between Landscape and Shorts *while streaming* — no URL edit, no
+refresh, no new source in OBS.
+
+| Panel says | 1920 × 1080 source | 1080 × 1920 source |
+|---|---|---|
+| **Landscape** | wide design | wide design, scaled and centred |
+| **Shorts** | vertical design, scaled and centred | vertical design |
+| **Both** | wide design | vertical design |
+
+In **Both** mode each source picks the design that matches its own size, which
+is what you want when one stream is landscape and another is vertical. In
+**Landscape** or **Shorts** the choice is forced on every source.
+
+Every change you make in the panel — wins, hero pick, ticker, theme, toasts —
+lands on the landscape and the vertical overlay at the same time, because they
+read the same live state.
+
+### What changes in the Shorts design
+
+- Brand bar across the top, match pill centred under it
+- Stats card, goal card and a bigger hero card stacked underneath
+- Webcam frame moved to the bottom left (`X 36 · Y 1523`, `520 × 293`)
+- Bigger ticker and toast, more room for long hero names
+
+### Streaming to both at once
+
+1. Add a **Browser** source at `1920 × 1080` with `http://localhost:8765/overlay.html`
+2. Add a second **Browser** source at `1080 × 1920` with the **same URL**
+3. Put each one in its own scene (or use OBS **Stream Targets** / a restream
+   service to push the vertical one to Shorts)
+4. Match your webcam to the format you are on using the table above
+
+You can also force a design regardless of the source size by adding
+`?mode=portrait` or `?mode=landscape` to the URL — useful if you render the
+vertical overlay inside a landscape canvas.
+
+### URL options for OBS
+
+If OBS or your browser does not pick up the format, use one of these — they
+all work:
+
+| URL | Result |
+|---|---|
+| `http://localhost:8765/overlay.html` | Follows **Stream format** in the panel (recommended) |
+| `http://localhost:8765/overlay.html?mode=portrait` | Pins this source to the vertical design |
+| `http://localhost:8765/overlay.html?mode=landscape` | Pins this source to the wide design |
+| `http://localhost:8765/portrait/overlay.html` | Same, without a query string |
+| `http://localhost:8765/landscape/overlay.html` | Same, without a query string |
+
+A pinned URL always wins for that source, so use it only for the one source
+that must stay a specific format.
+
+`?mode=` also accepts `format=`, `layout=`, a `#portrait` hash, and the
+aliases `short`, `shorts`, `vertical`, `tiktok`, `reels`, `9:16`, `wide`,
+`land`, `horizontal`, `16:9`.
+
+The control panel has a **Copy** button for the overlay URL, so you never have
+to type it yourself.
+
+> The vertical design is drawn on a 1080 × 1920 canvas. If you force it in a
+> 1920 × 1080 source it is scaled down and centred — size the browser source
+> to 1080 × 1920 for a Shorts scene.
+
+### If OBS still shows the old layout
+
+1. Make sure the URL has no `?mode=` in it (a pinned URL ignores the panel).
+2. Press **Refresh** on the browser source (right-click the source in OBS).
+3. Make sure **Shutdown source when not visible** is off.
+4. Check the browser source size matches the canvas you want.
 
 ### Control from your phone
 
@@ -108,8 +217,9 @@ macOS. Allow the firewall prompt on private networks if it appears.
 - **Text** — all labels are editable from the control panel. Long hero/title
   names shrink automatically on the screen pages.
 - **Layout** — sizes and positions live in `css/overlay.css`. The webcam frame
-  is `.cam` (left 44, bottom 76, 448 × 252). If you move it, move your OBS
-  webcam source by the same amount.
+  is `.cam` (left 44, bottom 76, 448 × 252) in the landscape design and
+  (left 36, bottom 104, 520 × 293) in the portrait design. If you move it, move
+  your OBS webcam source by the same amount.
 - **State** — everything is stored in `state.json`. Delete it while the server
   is stopped to start from `default-state.json`, or use **Reset everything**.
 
@@ -134,6 +244,7 @@ mlbb-overlay/
 ├── js/
 │   ├── defaults.js
 │   ├── icons.js
+│   ├── layout.js          ← responsive canvas (landscape / portrait)
 │   ├── overlay.js
 │   ├── screens.js
 │   └── control.js
@@ -163,12 +274,14 @@ Allow access on **private networks**. This is only needed for phone control;
 `localhost` works without it.
 
 **The overlay looks black / not transparent**
-Make sure it is a **Browser** source (not Media Source), sized 1920 × 1080.
-Transparency is the default; don't add a custom CSS background.
+Make sure it is a **Browser** source (not Media Source), sized to your canvas
+(1920 × 1080 or 1080 × 1920). Transparency is the default; don't add a custom
+CSS background.
 
 **My webcam doesn't sit in the frame**
-Place the webcam at exactly **X 44 · Y 752**, **448 × 252**. If you scale the
-webcam, scale the overlay source by the same factor (or keep both at 100%).
+Place the webcam at exactly **X 44 · Y 752**, **448 × 252** for landscape, or
+**X 36 · Y 1523**, **520 × 293** for Shorts. If you scale the webcam, scale the
+overlay source by the same factor (or keep both at 100%).
 
 **The countdown says 00:00**
 Press **Restart countdowns** in the control panel. Countdowns also reset when
@@ -200,6 +313,6 @@ pack intentionally doesn't include chat so you can position/theme it yourself.
 - Runs the same on macOS and Windows; OBS Browser sources use identical URLs.
 - Fonts (Chakra Petch, Rajdhani, Inter) are bundled in `assets/fonts`, so the
   overlay still looks right with no internet.
-- Tested layout: 1920 × 1080 at 100% source scale. If you stream at 2560 × 1440,
-  keep the browser source at 1920 × 1080 and scale it up in OBS, or change the
-  fixed sizes in the CSS.
+- Tested layout: 1920 × 1080 and 1080 × 1920 at 100% source scale. Any other
+  canvas size is scaled down automatically — the overlay keeps its proportions
+  and stays centred.

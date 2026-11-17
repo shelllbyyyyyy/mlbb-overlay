@@ -56,5 +56,8 @@ window.MLBB_DEFAULTS = {
       subtitle: "GG WP — see you next stream"
     }
   },
+  layout: {
+    mode: "both"
+  },
   pulse: { id: 0, type: "info", text: "" }
 };
