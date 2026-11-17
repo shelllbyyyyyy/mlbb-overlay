@@ -581,6 +581,19 @@
       renderSocialRows(state.socials);
       scheduleSave();
     });
+
+    // Keyboard shortcuts: W = win, L = loss, M = MVP.
+    // Ignored while typing in a field so they never eat normal input.
+    document.addEventListener("keydown", (event) => {
+      if (event.defaultPrevented || event.repeat) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      const el = event.target;
+      if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
+      const id = { w: "btnWin", l: "btnLoss", m: "btnMvp" }[event.key.toLowerCase()];
+      if (!id) return;
+      event.preventDefault();
+      $(id).click();
+    });
   }
 
   /* ── boot ────────────────────────────────────────────────────── */

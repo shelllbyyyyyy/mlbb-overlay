@@ -24,22 +24,22 @@
     }
   ],
   "session": {
-    "wins": 2,
-    "losses": 1,
+    "wins": 0,
+    "losses": 0,
     "mvp": 0,
     "goalTarget": 10,
     "goalLabel": "Ranked wins today"
   },
   "match": {
     "mode": "RANKED",
-    "rank": "MYTHIC 93★",
+    "rank": "MYTHICAL GLORY 95★",
     "queue": "SOLO"
   },
   "hero": {
     "enabled": false,
     "name": "LING",
     "role": "Jungler",
-    "note": "Road to Mythic Glory",
+    "note": "Grinding MMR",
     "image": ""
   },
   "ticker": {
@@ -70,5 +70,26 @@
   },
   "layout": {
     "mode": "landscape"
+  },
+  "mlbb": {
+    "connected": true,
+    "provider": "Rone Arena",
+    "roleId": "89782559",
+    "zoneId": "2182",
+    "name": "S H E L B Y",
+    "level": 116,
+    "rankLevel": 231,
+    "rank": "MYTHICAL GLORY 95★",
+    "highestRank": "MYTHICAL IMMORTAL 119★",
+    "avatar": "https://wsrv.nl/?url=https%3A%2F%2Fakmpicture.youngjoygame.com%2Fdist%2Fface%2F2182%2F59%2F25%2F23_new_33203288-5fd0-4f63-ade9-83e0dd6c5395.jpg",
+    "expiresAt": 1795514874,
+    "lastSync": 1794918836,
+    "lastError": "",
+    "statsOffline": true,
+    "statsCheckedAt": 1794917610,
+    "today": {},
+    "career": {},
+    "recent": [],
+    "autoSync": true
   }
 }
